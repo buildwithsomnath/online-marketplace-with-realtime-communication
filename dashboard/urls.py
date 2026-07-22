@@ -1,12 +1,21 @@
-from django.contrib import admin
-from django.conf import settings
-from django.urls import path,include
-from django.conf.urls.static import static
+from django.urls import path
 
-from . import views
+from .views import (
+    DashboardView,
+    MyItemsView,
+    MyItemDetailView,
+)
 
-app_name='dashboard'
+app_name = "dashboard"
 
 urlpatterns = [
-    path('',views.index,name='index'),
-]   
+    path("", DashboardView.as_view(), name="dashboard"),
+
+    path("items/", MyItemsView.as_view(), name="my-items"),
+
+    path(
+        "items/<int:pk>/",
+        MyItemDetailView.as_view(),
+        name="my-item-detail",
+    ),
+]

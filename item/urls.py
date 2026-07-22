@@ -1,12 +1,25 @@
 from django.urls import path
-from . import views
 
-app_name='item'
+from .views import (
+    CategoryListView,
+    ItemDetailView,
+    ItemListCreateView,
+)
 
-urlpatterns=[
-    path('',views.items,name='items'),
-    path('new/',views.new,name='new'),
-    path('<int:pk>/',views.detail,name='detail'),
-    path('<int:pk>/delete/',views.delete,name='delete'),
-    path('<int:pk>/edit/',views.edit,name='edit'),
+app_name = "item"
+
+urlpatterns = [
+    path("", ItemListCreateView.as_view(), name="item-list-create"),
+
+    path(
+        "categories/",
+        CategoryListView.as_view(),
+        name="category-list",
+    ),
+
+    path(
+        "<int:pk>/",
+        ItemDetailView.as_view(),
+        name="item-detail",
+    ),
 ]

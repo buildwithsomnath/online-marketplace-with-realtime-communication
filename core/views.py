@@ -1,32 +1,46 @@
-from django.shortcuts import render,redirect
-from item.models import Category,Item
-from .forms import SignupForm
-# Create your views here.
-def index(request):
-    items=Item.objects.filter(is_sold=False)[0:6]
-    categories=Category.objects.all()
-    return render(request,"core/index.html",{
-        'categories':categories,
-        'items':items,
-    })
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
 
-def contact(request):
-    return render(request,"core/contact.html")
-def about(request):
-    return render(request,"core/about.html")
-def terms(request):
-    return render(request,"core/terms.html")
-def privacy(request):
-    return render(request,"core/privacy.html")
+from .serializers import SignupSerializer
+
+
+@api_view(["POST"])
 def signup(request):
-    if request.method=='POST':
-        form=SignupForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/login/')
-    else:
-        form=SignupForm()
+    serializer = SignupSerializer(data=request.data)
 
-    return render(request,'core/signup.html',{
-        'form':form,
-    })
+    if serializer.is_valid():
+        serializer.save()
+
+        return Response(
+            {
+                "success": True,
+                "message": "Account created successfully.",
+                "user": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+    return Response(
+        {
+            "success": False,
+            "errors": serializer.errors,
+        },
+        status=status.HTTP_400_BAD_REQUEST,
+    )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def profile(request):
+    user = request.user
+
+    return Response(
+        {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+        }
+    )

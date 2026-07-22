@@ -1,71 +1,66 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404,redirect
-from item.models import Item
-from . models import Conversation
-from .forms import ConversationMessageForm
-# Create your views here.
-@login_required
-def new_conversation(request, item_pk):
-    item = get_object_or_404(Item, pk=item_pk)
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-    if item.created_by == request.user:
-        return redirect('dashboard:index')
-    
-    conversation = Conversation.objects.filter(item=item).filter(members__in=[request.user.id]).first()
 
-    if conversation:
-        return redirect('conversation:detail', pk=conversation.first().id)
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def conversation_list(request):
+    """
+    GET /api/conversations/
+    List all conversations for the authenticated user.
+    """
 
-    if request.method == 'POST':
-        form = ConversationMessageForm(request.POST)
+    return Response(
+        {
+            "message": "Conversation list endpoint."
+        }
+    )
 
-        if form.is_valid():
-            conversation = Conversation.objects.create(item=item)
-            conversation.members.add(request.user)
-            conversation.members.add(item.created_by)
-            conversation.save()
 
-            conversation_message = form.save(commit=False)
-            conversation_message.conversation = conversation
-            conversation_message.created_by = request.user
-            conversation_message.save()
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def conversation_create(request):
+    """
+    POST /api/conversations/
+    Start a new conversation.
+    """
 
-            return redirect('item:detail', pk=item_pk)
-    else:
-        form = ConversationMessageForm()
+    return Response(
+        {
+            "message": "Create conversation endpoint."
+        },
+        status=status.HTTP_201_CREATED,
+    )
 
-    return render(request, 'conversation/new.html', {
-        'form': form
-    })
 
-@login_required
-def inbox(request):
-    conversations = Conversation.objects.filter(members__in=[request.user.id])
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def conversation_detail(request, pk):
+    """
+    GET /api/conversations/<id>/
+    Get conversation details.
+    """
 
-    return render(request, 'conversation/inbox.html', {
-        'conversations': conversations
-    })
+    return Response(
+        {
+            "conversation_id": pk
+        }
+    )
 
-@login_required
-def detail(request, pk):
-    conversation = Conversation.objects.filter(members__in=[request.user.id]).get(pk=pk)
 
-    if request.method == 'POST':
-        form = ConversationMessageForm(request.POST)
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def conversation_delete(request, pk):
+    """
+    DELETE /api/conversations/<id>/
+    Delete (or archive) a conversation.
+    """
 
-        if form.is_valid():
-            conversation_message = form.save(commit=False)
-            conversation_message.conversation = conversation
-            conversation_message.created_by = request.user
-            conversation_message.save()
-
-            conversation.save()
-
-            return redirect('conversation:detail', pk=pk)
-    else:
-        form = ConversationMessageForm()
-    return render(request, 'conversation/detail.html', {
-        'conversation': conversation,
-        'form': form,
-    })
-    
+    return Response(
+        {
+            "message": "Conversation deleted."
+        },
+        status=status.HTTP_204_NO_CONTENT,
+    )

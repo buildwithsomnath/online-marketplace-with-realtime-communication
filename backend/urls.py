@@ -1,12 +1,15 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
-    path('',include('core.urls')),
-    path('items/',include('item.urls')),
-    path('dashboard/',include('dashboard.urls')),
-    path('conversatin/',include('conversation.urls')),
-    path('admin/', admin.site.urls),
+    path("api/auth/", include("core.urls")),
+    path("api/items/", include("item.urls")),
+    path("api/dashboard/", include("dashboard.urls")),
+    path("api/conversation/", include("conversation.urls")),
+    path("admin/", admin.site.urls),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns+= static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
