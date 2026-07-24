@@ -9,7 +9,7 @@ class CategoryListView(APIView):
 
     def get(self, request):
         """
-        GET /api/items/categories/
+        List all categories.
         """
 
         return Response({
@@ -22,7 +22,7 @@ class ItemListCreateView(APIView):
 
     def get(self, request):
         """
-        GET /api/items/
+        List all items.
         """
 
         return Response({
@@ -31,7 +31,7 @@ class ItemListCreateView(APIView):
 
     def post(self, request):
         """
-        POST /api/items/
+        Create a new item.
         """
 
         return Response(
@@ -47,7 +47,7 @@ class ItemDetailView(APIView):
 
     def get(self, request, pk):
         """
-        GET /api/items/<id>/
+        Retrieve item details.
         """
 
         return Response({
@@ -56,18 +56,16 @@ class ItemDetailView(APIView):
 
     def put(self, request, pk):
         """
-        PUT /api/items/<id>/
+        Update an item.
         """
 
-        return Response(
-            {
-                "message": "Item updated successfully."
-            }
-        )
+        return Response({
+            "message": "Item updated successfully."
+        })
 
     def delete(self, request, pk):
         """
-        DELETE /api/items/<id>/
+        Delete an item.
         """
 
         return Response(

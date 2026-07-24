@@ -5,9 +5,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path("api/auth/", include("core.urls")),
+
     path("api/items/", include("item.urls")),
+
     path("api/dashboard/", include("dashboard.urls")),
-    path("api/conversation/", include("conversation.urls")),
+
+    path("api/conversations/", include("conversation.urls")),
+
     path("admin/", admin.site.urls),
 ]
 

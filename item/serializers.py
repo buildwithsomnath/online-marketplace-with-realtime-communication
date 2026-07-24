@@ -16,17 +16,11 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = "__all__"
-        read_only_fields = [
-            "id",
-            "created_by",
-            "created_at",
-        ]
 
 
 class ItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        exclude = [
+        exclude = (
             "created_by",
-            "created_at",
-        ]
+        )
